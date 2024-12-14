@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
       },
       profilePicture: {
          type: String,
-         // required: true,
+         required: true,
       },
       refreshToken: {
          type: String,
@@ -31,10 +31,10 @@ const UserSchema = new mongoose.Schema(
    { timestamps: true },
 );
 
-UserSchema.pre("save", async function(next){
+UserSchema.pre("save", async function (next) {
    if (!this.isModified("password")) return next();
-   this.password = await bcryptjs.hash(this.password, 10)
-   next()
+   this.password = await bcryptjs.hash(this.password, 10);
+   next();
 });
 
 UserSchema.methods.isPasswordCorrect = async function (password) {
