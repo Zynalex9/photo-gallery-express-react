@@ -10,6 +10,7 @@ export async function uploadOnCloudinary(localFilePath) {
       if (!localFilePath) return null;
       const response = await cloudinary.uploader.upload(localFilePath, {
          resource_type: "auto",
+         folder:"pga/profilePic"
       });
       fs.unlinkSync(localFilePath);
       console.log("Response from cloudinary: ", response);

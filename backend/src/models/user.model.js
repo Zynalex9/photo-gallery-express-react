@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
+
 const UserSchema = new mongoose.Schema(
    {
       username: {
@@ -8,6 +9,8 @@ const UserSchema = new mongoose.Schema(
          required: true,
          unique: true,
          trim: true,
+         minlength: 3,
+         maxlength: 30,
       },
       email: {
          type: String,
@@ -19,6 +22,8 @@ const UserSchema = new mongoose.Schema(
       password: {
          type: String,
          required: true,
+         minlength: 6,
+         maxlength: 50,
       },
       profilePicture: {
          type: String,
@@ -27,6 +32,12 @@ const UserSchema = new mongoose.Schema(
       refreshToken: {
          type: String,
       },
+      uploadedPhotos: [
+         {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Photo",
+         }
+      ]
    },
    { timestamps: true },
 );
@@ -40,6 +51,7 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.isPasswordCorrect = async function (password) {
    return await bcryptjs.compare(password, this.password);
 };
+
 UserSchema.methods.generateAccessToken = () => {
    return jwt.sign(
       {
@@ -54,6 +66,7 @@ UserSchema.methods.generateAccessToken = () => {
       },
    );
 };
+
 UserSchema.methods.generateRefreshToken = () => {
    return jwt.sign(
       {
@@ -65,4 +78,5 @@ UserSchema.methods.generateRefreshToken = () => {
       },
    );
 };
+
 export const UserModel = mongoose.model("User", UserSchema);
