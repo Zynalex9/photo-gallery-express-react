@@ -1,4 +1,4 @@
-import { UserModel } from "../models/user.model";
+import { UserModel } from "../models/user.model.js";
 const registerUser = async (req, res) => {
    try {
       const { username, email, password } = req.body;
@@ -37,10 +37,12 @@ const registerUser = async (req, res) => {
          .status(201)
          .json({ message: "User Created", createdUser, success: true });
    } catch (error) {
+       console.log(error)
       return res.status(500).json({
          message: "Something went wrong",
          data: null,
          success: false,
+         error
       });
    }
 };
