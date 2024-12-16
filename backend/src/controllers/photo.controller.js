@@ -1,6 +1,6 @@
 import ApiError from "../utils/apiError.js";
 import { PhotoModel } from "../models/photo.model.js";
-import { uploadGalleryPhotosOnCloudinary } from "../utils/cloudinary.js";
+import {uploadOnCloudinary } from "../utils/cloudinary.js";
 import { UserModel } from "../models/user.model.js";
 export async function UploadPhoto(req, res) {
    try {
@@ -19,7 +19,7 @@ export async function UploadPhoto(req, res) {
          throw new ApiError(400, "Enter atleast one tag for image");
       }
       const LocalPath = req.files?.uploadedPhoto[0]?.path;
-      const response = await uploadGalleryPhotosOnCloudinary(LocalPath);
+      const response = await uploadOnCloudinary(LocalPath,"pga/photos");
       const newPhoto =await PhotoModel.create({
          title,
          description,

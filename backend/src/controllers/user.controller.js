@@ -47,7 +47,7 @@ const registerUser = async (req, res) => {
       }
       const profileLocalPath = req.files?.profilPic[0]?.path;
       console.log(profileLocalPath)
-      const profilePicture = await uploadOnCloudinary(profileLocalPath);
+      const profilePicture = await uploadOnCloudinary(profileLocalPath,"pga/profilePic");
       if (!profilePicture) {
          return res.status(407).json({
             message: "Profile picture is required",

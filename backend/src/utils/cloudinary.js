@@ -5,14 +5,14 @@ cloudinary.config({
    api_key: process.env.CLOUDINARY_API_KEY,
    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-export async function uploadOnCloudinary(localFilePath) {
+export async function uploadOnCloudinary(localFilePath,folder="pga/photos") {
    try {
-      if (!localFilePath) {
-         console.log("No Local file path recieved in cloudinary")
+      if (!localFilePath ) {
+         console.log("No Local file path or folder recieved in cloudinary ")
          return null};
       const response = await cloudinary.uploader.upload(localFilePath, {
          resource_type: "auto",
-         folder:"pga/profilePic"
+         folder:folder
       });
       fs.unlinkSync(localFilePath);
       return response
@@ -22,17 +22,3 @@ export async function uploadOnCloudinary(localFilePath) {
 }
 }
 
-export async function uploadGalleryPhotosOnCloudinary(localFilePath) {
-   try {
-      if (!localFilePath) return null;
-      const response = await cloudinary.uploader.upload(localFilePath, {
-         resource_type: "auto",
-         folder:"pga/photos"
-      });
-      fs.unlinkSync(localFilePath);
-      return response
-   }  catch (error) {
-    fs.unlinkSync(localFilePath) 
-    return null;
-}
-}
