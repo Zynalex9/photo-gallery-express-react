@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { loginUser, registerUser } from "../controllers/user.controller.js";
+import {
+   loginUser,
+   logOut,
+   registerUser,
+} from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import { UploadPhoto } from "../controllers/photo.controller.js";
@@ -16,6 +20,7 @@ userRouter.route("/register").post(
    registerUser,
 );
 userRouter.route("/login").post(loginUser);
+userRouter.route("/logout").post(verifyJWT, logOut);
 
 const photoRouter = Router();
 

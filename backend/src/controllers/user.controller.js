@@ -17,7 +17,7 @@ async function genereteToken(userId) {
       await user.save({ validateBeforeSave: false });
       return { accessToken, refreshToken };
    } catch (error) {
-      console.log("tokenerror",error)
+      console.log("tokenerror", error);
       throw new ApiError(
          500,
          "Something went wrong while generating referesh and access token",
@@ -46,8 +46,11 @@ const registerUser = async (req, res) => {
          });
       }
       const profileLocalPath = req.files?.profilPic[0]?.path;
-      console.log(profileLocalPath)
-      const profilePicture = await uploadOnCloudinary(profileLocalPath,"pga/profilePic");
+      console.log(profileLocalPath);
+      const profilePicture = await uploadOnCloudinary(
+         profileLocalPath,
+         "pga/profilePic",
+      );
       if (!profilePicture) {
          return res.status(407).json({
             message: "Profile picture is required",
@@ -112,4 +115,25 @@ const loginUser = asyncHandler(async (req, res) => {
       .cookie("refreshToken", refreshToken, options)
       .json(new ApiResponse(201, loggedInUser, "User Logged in"));
 });
-export { registerUser, loginUser };
+const logOut = asyncHandler(async (req, res) => {
+   const user = await UserModel.findByIdAndUpdate(
+      req.user._id,
+      {
+         $unset: {
+            refreshToken: 1,
+         },
+      },
+      {
+         new: true,
+      },
+   );
+   const options = {
+      httpOnly: true,
+      secure: true,
+   };
+   res.status(201)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User logged Out"));
+});
+export { registerUser, loginUser, logOut };
