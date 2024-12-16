@@ -46,24 +46,24 @@ const registerUser = async (req, res) => {
          });
       }
       const profileLocalPath = req.files?.profilPic[0]?.path;
+      console.log(profileLocalPath)
       const profilePicture = await uploadOnCloudinary(profileLocalPath);
-      console.log("Profile Picture URL: ", profilePicture);
       if (!profilePicture) {
          return res.status(407).json({
             message: "Profile picture is required",
             success: false,
          });
       }
-      console.log("profilePicture", profilePicture);
       const user = await UserModel.create({
          username,
          email,
          password,
-         profilePicture: profilePicture,
+         profilePicture: profilePicture.url,
       });
       const createdUser = await UserModel.findById(user._id).select(
          "-password -refreshToken",
       );
+
       if (!createdUser) {
          return res.status(500).json({
             message: "Something went wrong cannot create user",
@@ -88,7 +88,7 @@ const registerUser = async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
    const { email, username, password } = req.body;
    if (!email || !username) {
-      throw new ApiError(401, "Please enter email or password");
+      throw new ApiError(401, "Please enter email or username");
    }
    const user = await UserModel.findOne({ $or: [{ username }, { email }] });
    if (!user) {

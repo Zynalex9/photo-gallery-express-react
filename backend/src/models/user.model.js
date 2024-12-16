@@ -54,7 +54,7 @@ UserSchema.methods.isPasswordCorrect = async function (enteredPassword) {
 
 UserSchema.methods.generateAccessToken = function () {
    return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
-       expiresIn: "15m",
+       expiresIn: "1d",
    });
 };
 

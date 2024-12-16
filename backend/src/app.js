@@ -11,8 +11,9 @@ app.get("/connection", (res, req) => {
    req.send("hello");
 });
 
-import { userRouter } from "./routes/index.js";
+import { photoRouter, userRouter } from "./routes/index.js";
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/photo", photoRouter);
 
 export { app };

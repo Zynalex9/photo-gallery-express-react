@@ -7,14 +7,30 @@ cloudinary.config({
 });
 export async function uploadOnCloudinary(localFilePath) {
    try {
-      if (!localFilePath) return null;
+      if (!localFilePath) {
+         console.log("No Local file path recieved in cloudinary")
+         return null};
       const response = await cloudinary.uploader.upload(localFilePath, {
          resource_type: "auto",
          folder:"pga/profilePic"
       });
       fs.unlinkSync(localFilePath);
-      console.log("Response from cloudinary: ", response);
-      return response.url
+      return response
+   }  catch (error) {
+    fs.unlinkSync(localFilePath) 
+    return null;
+}
+}
+
+export async function uploadGalleryPhotosOnCloudinary(localFilePath) {
+   try {
+      if (!localFilePath) return null;
+      const response = await cloudinary.uploader.upload(localFilePath, {
+         resource_type: "auto",
+         folder:"pga/photos"
+      });
+      fs.unlinkSync(localFilePath);
+      return response
    }  catch (error) {
     fs.unlinkSync(localFilePath) 
     return null;
