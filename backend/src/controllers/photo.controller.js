@@ -1,6 +1,6 @@
 import ApiError from "../utils/apiError.js";
 import { PhotoModel } from "../models/photo.model.js";
-import {uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { UserModel } from "../models/user.model.js";
 export async function UploadPhoto(req, res) {
    try {
@@ -11,16 +11,13 @@ export async function UploadPhoto(req, res) {
       if (!title || !description) {
          throw new ApiError(400, "Title or description missing");
       }
-      const isPhoto = await PhotoModel.findOne({ title });
-      if (isPhoto) {
-         throw new ApiError(400, "Title Exist, Please choose another title");
-      }
+
       if (!tags) {
          throw new ApiError(400, "Enter atleast one tag for image");
       }
       const LocalPath = req.files?.uploadedPhoto[0]?.path;
-      const response = await uploadOnCloudinary(LocalPath,"pga/photos");
-      const newPhoto =await PhotoModel.create({
+      const response = await uploadOnCloudinary(LocalPath, "pga/photos");
+      const newPhoto = await PhotoModel.create({
          title,
          description,
          tags,
@@ -28,15 +25,14 @@ export async function UploadPhoto(req, res) {
          cloudinaryId: response.public_id,
          uploadedBy: req.user._id,
       });
-      await UserModel.findByIdAndUpdate(req.user._id,
-         {
-            $push: {
-               uploadedPhotos: newPhoto._id
-            }
+      await UserModel.findByIdAndUpdate(req.user._id, {
+         $push: {
+            uploadedPhotos: newPhoto._id,
          },
-
-      );
-      return res.status(200).json({ message: "Photo Uploaded Successfully", newPhoto });
+      });
+      return res
+         .status(200)
+         .json({ message: "Photo Uploaded Successfully", newPhoto });
    } catch (error) {
       console.log(error);
       return res.status(500).json({

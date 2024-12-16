@@ -87,7 +87,7 @@ const registerUser = async (req, res) => {
 };
 const loginUser = asyncHandler(async (req, res) => {
    const { email, username, password } = req.body;
-   if (!email || !username) {
+   if (!email && !username) {
       throw new ApiError(401, "Please enter email or username");
    }
    const user = await UserModel.findOne({ $or: [{ username }, { email }] });
