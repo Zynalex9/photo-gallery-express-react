@@ -6,7 +6,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
-import { UploadPhoto } from "../controllers/photo.controller.js";
+import { searchByTags, searchByTitle, UploadPhoto } from "../controllers/photo.controller.js";
 
 const userRouter = Router();
 
@@ -34,4 +34,6 @@ photoRouter.route("/upload-photo").post(
    ]),
    UploadPhoto,
 );
+photoRouter.route("/searchbytitle").get(searchByTitle)
+photoRouter.route("/searchbytags").get(searchByTags)
 export { userRouter, photoRouter };

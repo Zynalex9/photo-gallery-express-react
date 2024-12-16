@@ -2,6 +2,8 @@ import ApiError from "../utils/apiError.js";
 import { PhotoModel } from "../models/photo.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { UserModel } from "../models/user.model.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import ApiResponse from "../utils/apiResponse.js";
 export async function UploadPhoto(req, res) {
    try {
       const { title, description, tags } = req.body;
@@ -43,3 +45,37 @@ export async function UploadPhoto(req, res) {
       });
    }
 }
+export const searchByTitle = asyncHandler(async (req, res) => {
+   const { title } = req.query;
+   if (!title) {
+      throw new ApiError(407, "Please enter a title to search");
+   }
+   const searchResult = await PhotoModel.find({
+      title: { $regex: title, $options: "i" },
+   });
+   if (searchResult.length === 0) {
+      return res.status(404).json(new ApiResponse(404, [], "No Items found"));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(200, searchResult, "Result found"));
+});
+export const searchByTags = asyncHandler(async (req, res) => {
+   const { tags } = req.query;
+   if (!tags) {
+      throw new ApiError(407, "Please enter a tag to search");
+   }
+   const searchTags = tags.split(",");
+   console.log(searchTags);
+   const searchResult = await PhotoModel.find({
+      tags: { $in: searchTags },
+   });
+   if (searchResult.length === 0) {
+      return res
+         .status(404)
+         .json({ message: "No photos found with the provided tags" });
+   }
+   return res
+      .status(201)
+      .json(new ApiResponse(201, searchResult, "Result Found"));
+});
