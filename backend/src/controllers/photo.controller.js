@@ -1,6 +1,9 @@
 import ApiError from "../utils/apiError.js";
 import { PhotoModel } from "../models/photo.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+   deleteFromCloudinary,
+   uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { UserModel } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
@@ -78,4 +81,33 @@ export const searchByTags = asyncHandler(async (req, res) => {
    return res
       .status(201)
       .json(new ApiResponse(201, searchResult, "Result Found"));
+});
+export const deletePhoto = asyncHandler(async (req, res) => {
+   const { id } = req.body;
+   if (!id) {
+      throw new ApiError(400, "Photo ID is required");
+   }
+   const photo = await PhotoModel.findById(id);
+   if (!photo) {
+      throw new ApiError(404, "Photo not found");
+   }
+   if (photo.cloudinaryId) {
+      const response = await deleteFromCloudinary(photo.cloudinaryId);
+      if (response.result !== "ok") {
+         throw new ApiError(500, "Error deleting image from Cloudinary");
+      }
+   }
+   const delResponse = await PhotoModel.findByIdAndDelete(id);
+   if (delResponse) {
+      await UserModel.findByIdAndUpdate(req.user._id, {
+         $pull: {
+            uploadedPhotos: delResponse._id,
+         },
+      });
+   }
+   return res
+      .status(200)
+      .json({
+         message:`${photo.title} deleted successfully`
+      });
 });
