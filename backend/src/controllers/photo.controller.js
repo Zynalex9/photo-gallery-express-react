@@ -61,7 +61,7 @@ export const searchByTitle = asyncHandler(async (req, res) => {
    }
    return res
       .status(200)
-      .json(new ApiResponse(200, searchResult, "Result found"));
+      .json(new ApiResponse(200, searchResult, `Result(s) Found: ${searchResult.length}`));
 });
 export const searchByTags = asyncHandler(async (req, res) => {
    const { tags } = req.query;
@@ -80,7 +80,7 @@ export const searchByTags = asyncHandler(async (req, res) => {
    }
    return res
       .status(201)
-      .json(new ApiResponse(201, searchResult, "Result Found"));
+      .json(new ApiResponse(201, searchResult, `Result(s) Found: ${searchResult.length}`));
 });
 export const deletePhoto = asyncHandler(async (req, res) => {
    const { id } = req.body;
@@ -105,9 +105,27 @@ export const deletePhoto = asyncHandler(async (req, res) => {
          },
       });
    }
-   return res
-      .status(200)
-      .json({
-         message:`${photo.title} deleted successfully`
-      });
+   return res.status(200).json({
+      message: `${photo.title} deleted successfully`,
+   });
+});
+export const getAllPhotos = asyncHandler(async (req, res) => {
+   const photos = await PhotoModel.find();
+   if (!photos.length === 0) {
+      throw new ApiError(404, "No Photos found");
+   }
+   return res.status(200).json(
+      new ApiResponse(200, photos, `All photos ${photos.length}`),
+   );
+});
+export const getPhoto = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   if (!id) {
+      throw new ApiError(404, "Please enter photo id");
+   }
+   const photo = await PhotoModel.findById(id);
+   if (!photo) {
+      throw new ApiError(404, "No Image found");
+   }
+  return res.status(200).json(new ApiResponse(200, photo, `Returned ${photo.title}`));
 });
