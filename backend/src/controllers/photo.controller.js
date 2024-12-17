@@ -61,7 +61,13 @@ export const searchByTitle = asyncHandler(async (req, res) => {
    }
    return res
       .status(200)
-      .json(new ApiResponse(200, searchResult, `Result(s) Found: ${searchResult.length}`));
+      .json(
+         new ApiResponse(
+            200,
+            searchResult,
+            `Result(s) Found: ${searchResult.length}`,
+         ),
+      );
 });
 export const searchByTags = asyncHandler(async (req, res) => {
    const { tags } = req.query;
@@ -80,7 +86,13 @@ export const searchByTags = asyncHandler(async (req, res) => {
    }
    return res
       .status(201)
-      .json(new ApiResponse(201, searchResult, `Result(s) Found: ${searchResult.length}`));
+      .json(
+         new ApiResponse(
+            201,
+            searchResult,
+            `Result(s) Found: ${searchResult.length}`,
+         ),
+      );
 });
 export const deletePhoto = asyncHandler(async (req, res) => {
    const { id } = req.body;
@@ -114,9 +126,9 @@ export const getAllPhotos = asyncHandler(async (req, res) => {
    if (!photos.length === 0) {
       throw new ApiError(404, "No Photos found");
    }
-   return res.status(200).json(
-      new ApiResponse(200, photos, `All photos ${photos.length}`),
-   );
+   return res
+      .status(200)
+      .json(new ApiResponse(200, photos, `All photos ${photos.length}`));
 });
 export const getPhoto = asyncHandler(async (req, res) => {
    const { id } = req.params;
@@ -127,5 +139,53 @@ export const getPhoto = asyncHandler(async (req, res) => {
    if (!photo) {
       throw new ApiError(404, "No Image found");
    }
-  return res.status(200).json(new ApiResponse(200, photo, `Returned ${photo.title}`));
+   return res
+      .status(200)
+      .json(new ApiResponse(200, photo, `Returned ${photo.title}`));
 });
+// 1. Filter Photos by Tags and Title Combined
+export const allFilter = asyncHandler(async (req, res) => {
+   const { query } = req.query;
+   if (!query) {
+      throw new ApiError(404, "Please enter a query to find results");
+   }
+   const results = await PhotoModel.aggregate([
+      {
+         $match: {
+            $or: [
+               {
+                  title: { $regex: query, $options: "i" },
+               },
+               {
+                  description: { $regex: query, $options: "i" },
+               },
+               {
+                  tags: { $in: [query] },
+               },
+            ],
+         },
+      },
+   ]);
+   if (results.length === 0) {
+      return res
+         .status(200)
+         .json(new ApiResponse(200, [], `No images found for ${query}`));
+   }
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(
+            200,
+            results,
+            `${results.length} search results found`,
+         ),
+      );
+});
+// 2. Sort Photos by Upload Date and Views
+// 3. Paginate Photos
+// 4. Top Tags Analytics
+// 5. Photo Count Grouped by Users
+// 6. Search Photos by Tags and Aggregate User Info
+// 7. Get Latest Photos with Uploader Details
+// 8. Find Duplicate Photos (Based on Title or Tags)
+
