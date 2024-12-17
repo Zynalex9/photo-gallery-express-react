@@ -249,12 +249,45 @@ export const topTags = asyncHandler(async (req, res) => {
          },
       },
       {
-         $limit:5
-      }
+         $limit: 5,
+      },
    ]);
-   return res.status(200).json(new ApiResponse(200,results,"Top tags"))
+   return res.status(200).json(new ApiResponse(200, results, "Top tags"));
 });
 // 5. Photo Count Grouped by Users
+export const photoCountByUsers = asyncHandler(async (req, res) => {
+   const results = await PhotoModel.aggregate([
+      {
+         $group: {
+            _id: "$uploadedBy",
+            count: {
+               $sum: 1,
+            },
+         },
+      },
+      {
+         $lookup: {
+            from: "users",
+            foreignField: "_id",
+            localField: "_id",
+            as: "userDetails",
+         },
+      },
+      {
+         $unwind: {
+            path: "$userDetails",
+         },
+      },
+      {
+         $sort: {
+            count: -1,
+         },
+      },
+   ]);
+   return res
+      .status(200)
+      .json(new ApiResponse(200, results, "Photo Count Grouped by Users"));
+});
 // 6. Search Photos by Tags and Aggregate User Info
 // 7. Get Latest Photos with Uploader Details
 // 8. Find Duplicate Photos (Based on Title or Tags)
