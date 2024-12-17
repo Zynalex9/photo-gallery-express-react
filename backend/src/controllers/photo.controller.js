@@ -228,6 +228,32 @@ export const PaginatePhotos = asyncHandler(async (req, res) => {
    );
 });
 // 4. Top Tags Analytics
+export const topTags = asyncHandler(async (req, res) => {
+   const results = await PhotoModel.aggregate([
+      {
+         $unwind: {
+            path: "$tags",
+         },
+      },
+      {
+         $group: {
+            _id: "$tags",
+            count: {
+               $sum: 1,
+            },
+         },
+      },
+      {
+         $sort: {
+            count: -1,
+         },
+      },
+      {
+         $limit:5
+      }
+   ]);
+   return res.status(200).json(new ApiResponse(200,results,"Top tags"))
+});
 // 5. Photo Count Grouped by Users
 // 6. Search Photos by Tags and Aggregate User Info
 // 7. Get Latest Photos with Uploader Details
