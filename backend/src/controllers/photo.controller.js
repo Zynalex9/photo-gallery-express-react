@@ -181,11 +181,54 @@ export const allFilter = asyncHandler(async (req, res) => {
          ),
       );
 });
-// 2. Sort Photos by Upload Date and Views
+// 2. Sort Photos by Upload Date
+export const sortByDate = asyncHandler(async (req, res) => {
+   //-1 for descending , 1 ascending
+   const { sortingOrder } = req.body;
+   const results = await PhotoModel.aggregate([
+      {
+         $sort: {
+            createdAt: sortingOrder || -1,
+         },
+      },
+   ]);
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(
+            200,
+            results,
+            `Photos are filtered in ${sortingOrder == -1 ? "Descending" : "Ascending"} order`,
+         ),
+      );
+});
 // 3. Paginate Photos
+export const PaginatePhotos = asyncHandler(async (req, res) => {
+   const page = parseInt(req.query.page) || 1;
+   const limit = parseInt(req.query.limit) || 10;
+   const skip = (page - 1) * limit;
+   const results = await PhotoModel.aggregate([
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+   ]);
+   const totalDocuments = await PhotoModel.countDocuments();
+   const totalPages = Math.ceil(totalDocuments / limit);
+   return res.status(200).json(
+      new ApiResponse(
+         200,
+         {
+            totalDocuments,
+            totalPages,
+            results,
+            limit,
+         },
+         "Photos fetched successfully with pagination",
+      ),
+   );
+});
 // 4. Top Tags Analytics
 // 5. Photo Count Grouped by Users
 // 6. Search Photos by Tags and Aggregate User Info
 // 7. Get Latest Photos with Uploader Details
 // 8. Find Duplicate Photos (Based on Title or Tags)
-
