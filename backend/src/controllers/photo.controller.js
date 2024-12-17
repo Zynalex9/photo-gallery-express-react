@@ -289,5 +289,46 @@ export const photoCountByUsers = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, results, "Photo Count Grouped by Users"));
 });
 // 6. Search Photos by Tags and Aggregate User Info
+export const tagsAndUser = asyncHandler(async (req, res) => {
+   const { tags } = req.query;
+   if (!tags) {
+      throw new ApiError(407, "Please enter a tag to search");
+   }
+   const results = await PhotoModel.aggregate([
+      {
+         $match: {
+            tags: { $regex: tags, $options: "i" },
+         },
+      },
+      {
+         $lookup: {
+            from: "users",
+            localField: "uploadedBy",
+            foreignField: "_id",
+            as: "UploadedBy",
+         },
+      },
+      {
+         $project: {
+            title: 1,
+            tags: 1,
+            imageUrl: 1,
+            UploadedBy: {
+               username: 1,
+               profilePicture: 1,
+            },
+         },
+      },
+   ]);
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(
+            200,
+            results,
+            "Photos by Tags and Aggregate User Info",
+         ),
+      );
+});
 // 7. Get Latest Photos with Uploader Details
 // 8. Find Duplicate Photos (Based on Title or Tags)

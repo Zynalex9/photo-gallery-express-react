@@ -6,7 +6,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
-import { allFilter, deletePhoto, getAllPhotos, getPhoto, PaginatePhotos, photoCountByUsers, searchByTags, searchByTitle, sortByDate, topTags, UploadPhoto } from "../controllers/photo.controller.js";
+import { allFilter, deletePhoto, getAllPhotos, getPhoto, PaginatePhotos, photoCountByUsers, searchByTags, searchByTitle, sortByDate, tagsAndUser, topTags, UploadPhoto } from "../controllers/photo.controller.js";
 
 const userRouter = Router();
 
@@ -41,6 +41,7 @@ photoRouter.route("/sortbydate").get(sortByDate)
 photoRouter.route("/paginatephotos").get(PaginatePhotos)   
 photoRouter.route("/toptags").get(topTags)   
 photoRouter.route("/photocountbyuser").get(photoCountByUsers)   
+photoRouter.route("/tagsandusers").get(tagsAndUser)   
 photoRouter.route("/delete-photo").delete(verifyJWT,deletePhoto)
 photoRouter.route("/all-photos").get(getAllPhotos)
 photoRouter.route("/single-photo/:id").get(getPhoto)
