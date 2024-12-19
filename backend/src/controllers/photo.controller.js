@@ -337,7 +337,7 @@ export const findDuplicatePhotos = asyncHandler(async (req, res) => {
          $group: {
             _id: {
                title: "$title",
-               tags:"$tags"
+               tags: "$tags",
             },
             count: {
                $sum: 1,
