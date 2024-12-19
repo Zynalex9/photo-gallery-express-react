@@ -330,5 +330,28 @@ export const tagsAndUser = asyncHandler(async (req, res) => {
          ),
       );
 });
-// 7. Get Latest Photos with Uploader Details
-// 8. Find Duplicate Photos (Based on Title or Tags)
+// 7. Find Duplicate Photos (Based on Title or Tags)
+export const findDuplicatePhotos = asyncHandler(async (req, res) => {
+   const results = await PhotoModel.aggregate([
+      {
+         $group: {
+            _id: {
+               title: "$title",
+               tags:"$tags"
+            },
+            count: {
+               $sum: 1,
+            },
+            photo: {
+               $push: "$$ROOT",
+            },
+         },
+      },
+      {
+         $match: { count: { $gt: 1 } },
+      },
+   ]);
+   return res
+      .status(200)
+      .json(new ApiResponse(200, results, "Duplicate photos"));
+});
