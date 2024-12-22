@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPaginatedPhotos } from "../store/images.slice";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import Photo from "./Photo";
 import Search from "./Search";
 
@@ -22,7 +24,15 @@ const AllPhotos = () => {
   const results = paginatedPhotos?.results || [];
   let totalPages = paginatedPhotos?.totalPages;
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-start justify-around w-full gap-1 p-2 flex-wrap">
+        {Array.from({ length: 5 }).map((_, idx) => (
+          <Skeleton key={idx} height={350} width={250} duration={2}/>
+        ))}
+      </div>
+    );
+  }
   if (error) return <p>Error: {error}</p>;
 
   return (
