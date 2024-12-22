@@ -1,26 +1,51 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPaginatedPhotos } from "../store/images.slice";
 import Photo from "./Photo";
-import { Link } from "react-router-dom";
+
 const AllPhotos = () => {
-  const [allPhotos, setAllPhotos] = useState([]);
-  async function fetchPhotos() {
-    try {
-      const { data } = await axios.get("/api/v1/photo/all-photos");
-      console.log(data);
-      setAllPhotos(data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const [currentPage, SetCurrentPage] = useState(1);
+  const dispatch = useDispatch();
+  const { paginatedPhotos, loading, error } = useSelector(
+    (state) => state.photos
+  );
+
   useEffect(() => {
-    fetchPhotos();
-  }, []);
+    dispatch(fetchPaginatedPhotos({ page: currentPage }))
+      .then((response) =>
+        console.log("response from use effect", response.payload)
+      )
+      .catch((err) => console.log(err));
+  }, [dispatch, currentPage]);
+
+  const results = paginatedPhotos?.results || [];
+  let totalPages = paginatedPhotos?.totalPages;
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <div className="w-full flex flex-wrap gap-4 items-center justify-center p-2 bg-gray-100">
-      {allPhotos.map((photo) => (
-          <Photo photo={photo} />
-      ))}
+    <div>
+      <div className="flex items-start justify-around w-full gap-1 p-2 flex-wrap">
+        {results.length > 0 ? (
+          results.map((photo) => <Photo photo={photo} key={photo._id} />)
+        ) : (
+          <p>No Photos to show</p>
+        )}
+      </div>
+      <div className="pagination flex items-center justify-center">
+        {Array.from({ length: totalPages }, (_, idx) => {
+          return (
+            <button
+              onClick={() => SetCurrentPage(idx + 1)}
+              className="bg-gray-200 py-2 px-3 m-1 rounded-md text-black"
+              key={idx}
+            >
+              {idx + 1}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 };

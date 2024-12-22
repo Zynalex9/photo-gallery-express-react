@@ -205,8 +205,11 @@ export const sortByDate = asyncHandler(async (req, res) => {
 // 3. Paginate Photos
 export const PaginatePhotos = asyncHandler(async (req, res) => {
    const page = parseInt(req.query.page) || 1;
-   const limit = parseInt(req.query.limit) || 10;
+   const limit = parseInt(req.query.limit) || 5;
    const skip = (page - 1) * limit;
+   console.log(page)
+   console.log(limit)
+   console.log(skip)
    const results = await PhotoModel.aggregate([
       { $sort: { createdAt: -1 } },
       { $skip: skip },

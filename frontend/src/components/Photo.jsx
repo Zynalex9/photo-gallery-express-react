@@ -8,7 +8,7 @@ const Photo = ({ photo }) => {
         <img
           src={photo.imageUrl}
           alt={photo.title || "Photo"}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover border-2 border-blue-800"
         />
       </Link>
     </div>
