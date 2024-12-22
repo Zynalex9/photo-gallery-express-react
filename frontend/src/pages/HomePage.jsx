@@ -4,7 +4,7 @@ import Filters from "../components/Filters";
 
 const HomePage = () => {
   return (
-    <main>
+    <main className="bg-gray-200">
       <Filters/>
       <AllPhotos />
     </main>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPaginatedPhotos } from "../store/images.slice";
 import Photo from "./Photo";
+import Search from "./Search";
 
 const AllPhotos = () => {
   const [currentPage, SetCurrentPage] = useState(1);
@@ -26,6 +27,7 @@ const AllPhotos = () => {
 
   return (
     <div>
+      <Search/>
       <div className="flex items-start justify-around w-full gap-1 p-2 flex-wrap">
         {results.length > 0 ? (
           results.map((photo) => <Photo photo={photo} key={photo._id} />)
