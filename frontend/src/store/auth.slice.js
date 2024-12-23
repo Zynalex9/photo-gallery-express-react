@@ -3,10 +3,10 @@ import axios from "axios";
 
 export const fetchUser = createAsyncThunk(
   "fetch/user",
-  async (_, { rejectWithValue}) => {
+  async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get("/api/v1/user/getuser");
-      return response.data; 
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Unauthorized");
     }
@@ -14,7 +14,7 @@ export const fetchUser = createAsyncThunk(
 );
 
 const initialState = {
-  user: null, 
+  user: null,
   isLoggedIn: false,
   loading: false,
   error: null,
@@ -27,6 +27,10 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isLoggedIn = false;
+    },
+    loggedIn: (state,action) => {
+      state.isLoggedIn = true;
+      console.log("isada",action.payload)
     },
   },
   extraReducers: (builder) => {
@@ -49,5 +53,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout,loggedIn } = authSlice.actions;
 export default authSlice.reducer;

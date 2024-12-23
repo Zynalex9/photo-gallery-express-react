@@ -88,17 +88,20 @@ const registerUser = async (req, res) => {
    }
 };
 const loginUser = asyncHandler(async (req, res) => {
-   const { email, username, password } = req.body;
-   if (!email && !username) {
+   const { login,password } = req.body;
+   if (!login) {
       throw new ApiError(401, "Please enter email or username");
    }
-   const user = await UserModel.findOne({ $or: [{ username }, { email }] });
+   const user = await UserModel.findOne({ $or: [{ username:login }, { email:login }] });
    if (!user) {
-      throw new ApiError(401, "User not found");
+      return res.status(401).json(new ApiResponse(401, [], "Invalid username or email"));
+
    }
-   const isValidPassword = user.isPasswordCorrect(password);
+   const isValidPassword = await user.isPasswordCorrect(password);
    if (!isValidPassword) {
-      throw new ApiError(401, "Incorrect password");
+      return res.status(401).json(new ApiResponse(401, [], "Incorrect password"));
+
+
    }
    console.log("User found:", user);
    const { accessToken, refreshToken } = await genereteToken(user._id);
