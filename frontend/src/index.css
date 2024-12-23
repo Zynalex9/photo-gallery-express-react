@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: "Acumin";
+  src: url("./assets/fonts/Acumin-RPro.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}

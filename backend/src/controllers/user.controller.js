@@ -5,7 +5,6 @@ import ApiResponse from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 async function genereteToken(userId) {
    try {
-      console.log("Received userId:", userId); // Debug log
 
       const user = await UserModel.findById(userId);
       if (!user) {
@@ -135,5 +134,16 @@ const logOut = asyncHandler(async (req, res) => {
       .clearCookie("accessToken", options)
       .clearCookie("refreshToken", options)
       .json(new ApiResponse(200, {}, "User logged Out"));
+});
+export const getUser = asyncHandler(async (req, res) => {
+   const user =
+      (await UserModel.findById(req.user?._id).select(
+         "-password -accessToken",
+      )) || null;
+   if (!user) {
+      res.status(401).json(new ApiResponse(401, {}, "You are not logged in"));
+   }
+   res.status(200).json(new ApiResponse(200, user, "You are logged in"));
+
 });
 export { registerUser, loginUser, logOut };

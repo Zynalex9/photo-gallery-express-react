@@ -50,7 +50,7 @@ const AllPhotos = () => {
           return (
             <button
               onClick={() => SetCurrentPage(idx + 1)}
-              className="bg-gray-200 py-2 px-3 m-1 rounded-md text-black"
+              className={`bg-white py-2 px-3 m-1 rounded-md text-black ${currentPage === idx +1 ? "bg-blue-800 text-white":""}`}
               key={idx}
             >
               {idx + 1}
