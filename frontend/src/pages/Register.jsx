@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Bounce, Slide, ToastContainer, toast } from "react-toastify";
+import { Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
@@ -15,8 +15,8 @@ const Register = () => {
   } = useForm();
   const onSubmit = async (data) => {
     const formData = new FormData();
-    formData.append("username", data.username);
-    formData.append("email", data.email);
+    formData.append("username", lowerCaseUsername);
+    formData.append("email", lowerCaseEmail);
     formData.append("password", data.password);
     formData.append("profilPic", data.profilePic[0]);
     try {

@@ -64,9 +64,13 @@ const NavBar = () => {
                 Logout
               </button>
               {user?.data?.username ? (
-                <button className="py-2 px-4 bg-blue-500 text-black font-semibold rounded-md hover:bg-blue-600">
-                  {user.data.username}
-                </button>
+                <>
+                  <img
+                    src={user.data.profilePicture}
+                    alt=""
+                    className="h-[50px] w-[50px] rounded-full object-cover"
+                  />
+                </>
               ) : null}
             </>
           ) : (

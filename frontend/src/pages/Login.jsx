@@ -16,6 +16,7 @@ const Login = () => {
   const navigate = useNavigate();
   const onSubmit = async (formData) => {
     console.log(formData);
+
     try {
       const { data } = await axios.post("/api/v1/user/login", formData);
       toast.success(`Logged in. Redirecting to home page`, {
