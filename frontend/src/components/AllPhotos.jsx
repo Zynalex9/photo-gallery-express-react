@@ -38,7 +38,7 @@ const AllPhotos = () => {
   return (
     <div>
       <Search/>
-      <div className="flex items-start justify-around w-full gap-1 p-2 flex-wrap">
+      <div className="flex items-start justify-evenly w-full flex-wrap gap-1">
         {results.length > 0 ? (
           results.map((photo) => <Photo photo={photo} key={photo._id} />)
         ) : (
