@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPaginatedPhotos } from "../store/images.slice";
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Photo from "./Photo";
 import Search from "./Search";
 
@@ -28,7 +28,7 @@ const AllPhotos = () => {
     return (
       <div className="flex items-start justify-around w-full gap-1 p-2 flex-wrap">
         {Array.from({ length: 5 }).map((_, idx) => (
-          <Skeleton key={idx} height={350} width={250} duration={2}/>
+          <Skeleton key={idx} height={350} width={250} duration={2} />
         ))}
       </div>
     );
@@ -37,7 +37,7 @@ const AllPhotos = () => {
 
   return (
     <div>
-      <Search/>
+        <Search />
       <div className="flex items-start justify-evenly w-full flex-wrap gap-1">
         {results.length > 0 ? (
           results.map((photo) => <Photo photo={photo} key={photo._id} />)
@@ -50,7 +50,9 @@ const AllPhotos = () => {
           return (
             <button
               onClick={() => SetCurrentPage(idx + 1)}
-              className={`bg-white py-2 px-3 m-1 rounded-md text-black ${currentPage === idx +1 ? "bg-blue-800 text-white":""}`}
+              className={`py-2 px-3 m-1 rounded-md text-black ${
+                currentPage === idx + 1 ? "bg-blue-300 text-white" : ""
+              }`}
               key={idx}
             >
               {idx + 1}
