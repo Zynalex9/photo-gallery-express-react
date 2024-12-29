@@ -7,6 +7,7 @@ import {
 import { UserModel } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/apiResponse.js";
+import { redis } from "../index.js";
 export async function UploadPhoto(req, res) {
    try {
       const { title, description, tags } = req.body;
@@ -122,10 +123,23 @@ export const deletePhoto = asyncHandler(async (req, res) => {
    });
 });
 export const getAllPhotos = asyncHandler(async (req, res) => {
+   const cachedKey = "allPhotos";
+   const cachedPhotos = await redis.get(cachedKey);
+   if (cachedPhotos) {
+      console.log("cache hit");
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(200, JSON.parse(cachedPhotos), "From Redis Cache"),
+         );
+   }
    const photos = await PhotoModel.find();
    if (!photos.length === 0) {
       throw new ApiError(404, "No Photos found");
    }
+   console.log("cache miss");
+
+   await redis.set("allPhotos", JSON.stringify(photos), "EX", 3600);
    return res
       .status(200)
       .json(new ApiResponse(200, photos, `All photos ${photos.length}`));
@@ -207,9 +221,20 @@ export const PaginatePhotos = asyncHandler(async (req, res) => {
    const page = parseInt(req.query.page) || 1;
    const limit = parseInt(req.query.limit) || 5;
    const skip = (page - 1) * limit;
-   console.log(page);
-   console.log(limit);
-   console.log(skip);
+   const cachedKey = `photos:page:${page}:limit:${limit}`;
+   const cachedPhotos = await redis.get(cachedKey);
+   if (cachedPhotos) {
+      console.log("cache hit");
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(
+               200,
+               JSON.parse(cachedPhotos),
+               "Photos returned from a cache",
+            ),
+         );
+   }
    const results = await PhotoModel.aggregate([
       { $sort: { createdAt: -1 } },
       { $skip: skip },
@@ -217,6 +242,12 @@ export const PaginatePhotos = asyncHandler(async (req, res) => {
    ]);
    const totalDocuments = await PhotoModel.countDocuments();
    const totalPages = Math.ceil(totalDocuments / limit);
+   await redis.set(cachedKey, JSON.stringify({
+      totalDocuments,
+      totalPages,
+      results,
+      limit,
+   }), "EX", 3600);   console.log("cache miss")
    return res.status(200).json(
       new ApiResponse(
          200,

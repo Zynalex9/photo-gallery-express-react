@@ -4,14 +4,23 @@ export const fetchPhotos = createAsyncThunk("fetch/photos", async () => {
   const { data } = await axios.get("/api/v1/photo/all-photos");
   return data.data;
 });
-export const fetchPaginatedPhotos = createAsyncThunk("fetch/paginate/photos", async ({page}) => {
-  const { data } = await axios.get(`/api/v1/photo/paginatephotos?page=${page}`);
-  return data.data;
-});
+export const fetchPaginatedPhotos = createAsyncThunk(
+  "fetch/paginate/photos",
+  async ({ page }) => {
+    try {
+      const { data } = await axios.get(
+        `/api/v1/photo/paginatephotos?page=${page}`
+      );
+      return data.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 const initialState = {
   photos: [],
-  paginatedPhotos:[],
+  paginatedPhotos: [],
   loading: false,
   error: false,
   filteredPhotos: false,
@@ -44,7 +53,7 @@ const imageSlice = createSlice({
         state.loading = false;
         state.error = false;
         state.paginatedPhotos = action.payload;
-        console.log("action", action.payload)
+        console.log("action", action.payload);
       })
       .addCase(fetchPaginatedPhotos.rejected, (state) => {
         state.loading = false;
