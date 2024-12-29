@@ -15,6 +15,7 @@ import {
    getPhoto,
    PaginatePhotos,
    photoCountByUsers,
+   photosByUser,
    searchByTags,
    searchByTitle,
    sortByDate,
@@ -62,5 +63,5 @@ photoRouter.route("/duplicatephotos").get(findDuplicatePhotos);
 photoRouter.route("/delete-photo").delete(verifyJWT, deletePhoto);
 photoRouter.route("/all-photos").get(getAllPhotos);
 photoRouter.route("/single-photo/:id").get(getPhoto);
-
+photoRouter.route("/photos-by-user").get(verifyJWT, photosByUser);
 export { userRouter, photoRouter };

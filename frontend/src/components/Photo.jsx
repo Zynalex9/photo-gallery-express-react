@@ -15,7 +15,7 @@ const Photo = ({ photo }) => {
       <div className="flex justify-between items-center text-xl font-bold py-2">
         <h1>{photo.title}</h1>
         <div className="flex gap-1">
-          {photo.tags.map((tag, index) => (
+          {photo.tags&&photo.tags.map((tag, index) => (
             <h1 className="bg-gray-300 p-1 rounded-full" key={index}>{tag}</h1>
           ))}
         </div>

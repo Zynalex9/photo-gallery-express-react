@@ -65,11 +65,13 @@ const NavBar = () => {
               </button>
               {user?.data?.username ? (
                 <>
-                  <img
-                    src={user.data.profilePicture}
-                    alt=""
-                    className="h-[50px] w-[50px] rounded-full object-cover"
-                  />
+                  <Link to={`/user/profile/${user.data._id}`}>
+                    <img
+                      src={user.data.profilePicture}
+                      alt=""
+                      className="h-[50px] w-[50px] rounded-full object-cover"
+                    />
+                  </Link>
                 </>
               ) : null}
             </>

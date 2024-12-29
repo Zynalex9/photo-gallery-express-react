@@ -5,6 +5,7 @@ import PhotoDetail from "../pages/PhotoDetail";
 import SearchPage from "../pages/SearchPage";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
+import Profile from "../pages/Profile";
 
 const AllRoutes = () => {
   return (
@@ -15,6 +16,7 @@ const AllRoutes = () => {
         <Route path="/search/:search" element={<SearchPage />} />
         <Route path="/user/register" element={<Register/>}/>
         <Route path="/user/login" element={<Login/>}/>
+        <Route path="/user/profile/:user" element={<Profile/>}/>
       </Routes>
     </div>
   );

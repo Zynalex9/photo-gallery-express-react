@@ -207,9 +207,9 @@ export const PaginatePhotos = asyncHandler(async (req, res) => {
    const page = parseInt(req.query.page) || 1;
    const limit = parseInt(req.query.limit) || 5;
    const skip = (page - 1) * limit;
-   console.log(page)
-   console.log(limit)
-   console.log(skip)
+   console.log(page);
+   console.log(limit);
+   console.log(skip);
    const results = await PhotoModel.aggregate([
       { $sort: { createdAt: -1 } },
       { $skip: skip },
@@ -357,4 +357,27 @@ export const findDuplicatePhotos = asyncHandler(async (req, res) => {
    return res
       .status(200)
       .json(new ApiResponse(200, results, "Duplicate photos"));
+});
+export const photosByUser = asyncHandler(async (req, res) => {
+   const userID = req.user._id || null;
+   if (!userID) {
+      return res
+         .status(401)
+         .json(
+            new ApiResponse(
+               401,
+               {},
+               "You are not logged in to get photos for a user",
+            ),
+         );
+   }
+   const photos = await PhotoModel.find({ uploadedBy: userID });
+   if (!photos) {
+      return res
+         .status(404)
+         .json(new ApiResponse(404, {}, "No Images uploaded by user"));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(200, photos, "images available"));
 });
